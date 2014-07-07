@@ -1,7 +1,7 @@
 {
   "name": "node-countdown-stopwatch",
-  "repository": "https://github.com/MickCrozier/node-countdown-timer",
-  "homepage": "https://github.com/MickCrozier/node-countdown-timer",
+  "repository": "https://github.com/MickCrozier/node-timer-stopwatch",
+  "homepage": "https://github.com/MickCrozier/node-timer-stopwatch",
   "description": "A stopwatch and countdown timer for node",
   "version": "0.0.0",
   "private": false,

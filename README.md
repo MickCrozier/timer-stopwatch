@@ -3,12 +3,12 @@
 
 node-countdown-stopwatch
 ========================
-[![Build Status](https://travis-ci.org/MickCrozier/node-countdown-stopwatch.svg?branch=master)](https://travis-ci.org/MickCrozier/node-countdown-stopwatch)
+[![Build Status](https://travis-ci.org/MickCrozier/node-timer-stopwatch.svg?branch=master)](https://travis-ci.org/MickCrozier/node-timer-stopwatch)
 
 A stopwatch and countdown clock module for node.js
 
 
-This is based on work from a browser stopwatch I found years ago - sadly I cannot find it again to give credit to original author.
+This is based on work from a browser stopwatch I found years ago - sadly I cannot find it again to give credit to the original author.
 
 
 
@@ -16,7 +16,7 @@ Install
 ======
 
 ```shell
-npm install git://github.com/mickcrozier/node-countdown-stopwatch.git
+npm install git://github.com/mickcrozier/node-timer-stopwatch.git
 ```
 
 
