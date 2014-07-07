@@ -1,10 +1,9 @@
 {
   "name": "node-timer-stopwatch",
-  "version": "0.1.0",
   "repository": "https://github.com/MickCrozier/node-timer-stopwatch",
   "homepage": "https://github.com/MickCrozier/node-timer-stopwatch",
   "description": "A stopwatch and countdown timer for node",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
   "dependencies": {
     "lodash": "^2.4.1"

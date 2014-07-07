@@ -35,7 +35,7 @@ describe('Countdown Timer', function() {
 		countdownTimer.start();
 		setTimeout(function(){
 			expect(countdownTimer.ms).to.be.equal(startTime);
-		}, 2);
+		}, 7);
 
 		setTimeout(function(){
 			countdownTimer.stop();
@@ -52,7 +52,7 @@ describe('Countdown Timer', function() {
 			countdownTimer.stop();
 			expect(countdownTimer.ms).to.be.below(startTime);
 			done();
-		}, 2);
+		}, 3);
 	});
 
 
@@ -99,7 +99,7 @@ describe('Countdown Timer', function() {
 		countdownTimer.on('almostdone',function(formatted, ms){
 			countdownTimer.stop();
 			expect(countdownTimer.ms).to.below(20);
-			expect(countdownTimer.ms).to.above(15);
+			expect(countdownTimer.ms).to.above(5);
 			done();
 		});
 	});
@@ -141,7 +141,7 @@ describe('Stopwatch', function() {
 		stopwatch.start();
 		setTimeout(function(){
 			expect(stopwatch.ms).to.be.equal(startTime);
-		}, 4);
+		}, 7);
 
 		setTimeout(function(){
 			stopwatch.stop();
@@ -158,7 +158,7 @@ describe('Stopwatch', function() {
 			stopwatch.stop();
 			expect(stopwatch.ms).to.be.above(startTime);
 			done();
-		}, 2);
+		}, 3);
 	});
 
 
