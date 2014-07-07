@@ -1,6 +1,4 @@
 
-##IN DEVLEOPMENT - NOT READY YET
-
 node-timer-stopwatch
 ========================
 [![Build Status](https://travis-ci.org/MickCrozier/node-timer-stopwatch.svg?branch=master)](https://travis-ci.org/MickCrozier/node-timer-stopwatch)
