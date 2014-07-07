@@ -14,7 +14,6 @@ module.exports = function(grunt) {
 		    },
 		    all: ['*.js', 'lib/**/*.js', 'api/**/*js', 'test/**/*.js'],
 		    testu: ['*.js', 'lib/**/*js', 'api/**/*js', 'test/unit/*js'],
-		    testi: ['test/integration/*js'],
 		},
 
 
@@ -26,13 +25,6 @@ module.exports = function(grunt) {
 	        	src: ['test/unit/*spec.js']
 	      	},
 
-	      	integration: {
-	        	options: {
-	          		reporter: 'spec',
-	          		slow: 200,
-	        	},
-	        	src: ['test/integration/*spec.js']
-	      	}
 	    },
 
 
@@ -42,9 +34,9 @@ module.exports = function(grunt) {
 			},
 
 			testall: {
-				files: ['*.js', 'lib/**/*js', 'api/**/*js', 'test/unit/*js', 'test/integration/*js'],
+				files: ['*.js', 'lib/**/*js', 'api/**/*js', 'test/unit/*js'],
 				//tasks: ['jshint:all', 'mochaTest:unit', 'startMongo', 'wait:giveMongoSomeTimeToLoad', 'force:on','mochaTest:integration', 'force:restore', 'stopMongo'],
-				tasks: ['jshint:all', 'mochaTest:unit' ,'mochaTest:integration'],
+				tasks: ['jshint:all', 'mochaTest:unit'],
 				options: {
 					// spawn: false,
 				},
@@ -59,15 +51,6 @@ module.exports = function(grunt) {
 				}
 			},
 
-
-			testi: {
-				files: ['*.js', 'lib/**/*js', 'api/**/*js', 'test/integration/*js'],
-				tasks: ['jshint:testi', 'mochaTest:integration'],
-				options: {
-					// spawn: false,
-				},
-			},
-
 		},
 
 
@@ -77,7 +60,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-
 
 
 	grunt.registerTask('test', 'Runs Mocha tests add --watch for continuous', function () {

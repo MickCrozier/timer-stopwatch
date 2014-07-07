@@ -1,15 +1,15 @@
 
 ##IN DEVLEOPMENT - NOT READY YET
 
-node-countdown-stopwatch
+node-timer-stopwatch
 ========================
 [![Build Status](https://travis-ci.org/MickCrozier/node-timer-stopwatch.svg?branch=master)](https://travis-ci.org/MickCrozier/node-timer-stopwatch)
 
 A stopwatch and countdown clock module for node.js
 
 
-This is based on work from a browser stopwatch I found years ago - sadly I cannot find it again to give credit to the original author.
 
+This is based on work from [Kore Byberg](http://www.timpelen.com/extra/sidebars/stopwatch/stopwatch.htm)
 
 
 Install
@@ -23,16 +23,17 @@ npm install git://github.com/mickcrozier/node-timer-stopwatch.git
 How to
 ======
 ```
-timer = new Stopwatch([countDownTime], [options])
+timer = new Stopwatch([countDownMS], [options])
 ```
 
 
 ```js
 var Stopwatch = require('node-countdown-stopwatch');
-var timer = new Stopwatch(60); // A new countdown timer with 60 seconds
+
+var timer = new Stopwatch(60000); // A new countdown timer with 60 seconds
 var clock = new Stopwatch(); // A new count up clock. Starts at 0.
 
-// Fires every 10ms by default. Change setting the 'refreshTime' options
+// Fires every 10ms by default. Change setting the 'refreshRateMS' options
 timer.on('time', function(time) {
 	console.log(time.clock); // formatted time as mm:ss
 	console.log(time.ms); // number of milliseconds past (or remaining);
@@ -43,25 +44,46 @@ timer.on('done', function(){
 	console.log('Timer is complete');
 });
 
-// Fires when the timer is almost complete - default is 10 seconds remaining. Chnage with 'almostDoneTime' option
+// Fires when the timer is almost complete - default is 10 seconds remaining. Chnage with 'almostDoneMS' option
 timer.on('almostdone', function() {
 	console.log('Timer is almost complete');
 });
 
 ```
 
+###Methods
+```js
+timer.start();
+timer.stop();
+timer.startstop();
+timer.reset();
+```
+
+###Properties
+```js
+timer.ms;		// Number of milliseconds on the clock
+timer.clock;	// The formatted clock as MM:SS
+```
+
+
+
+###Options
+```js
+var options = {
+	refreshRateMS: 10,		// How often the clock should be updated
+	almostDoneMS: 10000, 	// When counting down - this event will fire with this many milliseconds remaining on the clock
+}
+
+var timer = new Stopwatch(60000, options);
+```
 
 Testing
 ======
 
 Unit and Integration tests (requires dev dependencies)
 ```shell
-grunt test
+npm test
 ```
-
-#### Options
-**--watch** watches for changed files and re-runs tests automatically
-
 
 License
 ======
