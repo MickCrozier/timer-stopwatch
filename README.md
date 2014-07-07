@@ -26,11 +26,14 @@ timer = new Stopwatch([countDownMS], [options])
 
 
 ```js
-var Stopwatch = require('node-countdown-stopwatch');
+var Stopwatch = require('node-timer-stopwatch');
 
 var timer = new Stopwatch(60000); // A new countdown timer with 60 seconds
 var clock = new Stopwatch(); // A new count up clock. Starts at 0.
+```
 
+###Events
+```js
 // Fires every 10ms by default. Change setting the 'refreshRateMS' options
 timer.on('time', function(time) {
 	console.log(time.clock); // formatted time as mm:ss
