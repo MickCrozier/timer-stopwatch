@@ -1,20 +1,20 @@
 
-node-timer-stopwatch
+timer-stopwatch
 ========================
-[![Build Status](https://travis-ci.org/MickCrozier/node-timer-stopwatch.svg?branch=master)](https://travis-ci.org/MickCrozier/node-timer-stopwatch)
+[![Build Status](https://travis-ci.org/MickCrozier/timer-stopwatch.svg?branch=master)](https://travis-ci.org/MickCrozier/timer-stopwatch)
 
 A stopwatch and countdown clock module for node.js
 
 
 
-This is based on work from [Kore Byberg](http://www.timpelen.com/extra/sidebars/stopwatch/stopwatch.htm)
+This is loosly based on work from [Kore Byberg](http://www.timpelen.com/extra/sidebars/stopwatch/stopwatch.htm)
 
 
 Install
 ======
 
 ```shell
-npm install node-timer-stopwatch
+npm install timer-stopwatch
 ```
 
 
