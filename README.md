@@ -14,7 +14,7 @@ Install
 ======
 
 ```shell
-npm install git://github.com/mickcrozier/node-timer-stopwatch.git
+npm install node-timer-stopwatch
 ```
 
 
