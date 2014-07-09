@@ -34,14 +34,14 @@ describe('Countdown Timer', function() {
 		var startTime = countdownTimer.ms;
 		countdownTimer.start();
 		setTimeout(function(){
-			expect(countdownTimer.ms).to.be.equal(startTime);
-		}, 7);
+			expect(countdownTimer.ms).to.be.above(59998);
+		}, 10);
 
 		setTimeout(function(){
 			countdownTimer.stop();
 			expect(countdownTimer.ms).to.be.below(startTime);
 			done();
-		}, 15);
+		}, 70);
 	});
 
 	it('should countdown at max refresh speed', function(done) {
@@ -93,7 +93,7 @@ describe('Countdown Timer', function() {
 	});
 
 	it('should fire the almostdone event', function(done) {
-		var countdownTimer = new Stopwatch(40, {almostDoneMS:20});
+		var countdownTimer = new Stopwatch(40, {almostDoneMS:20, refreshRateMS:10});
 		var startTime = countdownTimer.ms;
 		countdownTimer.start();
 		countdownTimer.on('almostdone',function(formatted, ms){
@@ -141,13 +141,13 @@ describe('Stopwatch', function() {
 		stopwatch.start();
 		setTimeout(function(){
 			expect(stopwatch.ms).to.be.equal(startTime);
-		}, 7);
+		}, 30);
 
 		setTimeout(function(){
 			stopwatch.stop();
 			expect(stopwatch.ms).to.be.above(startTime);
 			done();
-		}, 15);
+		}, 60);
 	});
 
 	it('should countdown at max refresh speed', function(done) {
@@ -199,7 +199,7 @@ describe('Stopwatch', function() {
 	});
 
 	it('should NOT fire the almostdone event', function(done) {
-		var stopwatch = new Stopwatch(false, {almostDoneMS:50});
+		var stopwatch = new Stopwatch(false, {almostDoneMS:50, refreshRateMS:10});
 		stopwatch.start();
 		var fired = false;
 		stopwatch.on('almostdone',function(formatted, ms){
@@ -208,7 +208,7 @@ describe('Stopwatch', function() {
 		setTimeout(function() {
 			expect(fired).to.be(false);
 			done();
-		}, 30);
+		}, 60);
 	});
 
 
@@ -222,7 +222,7 @@ describe('Stopwatch', function() {
 		setTimeout(function() {
 			expect(fired).to.be(false);
 			done();
-		}, 20);
+		}, 60);
 	});
 
 });
