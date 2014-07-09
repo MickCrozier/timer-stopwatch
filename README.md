@@ -1,9 +1,8 @@
 
 timer-stopwatch
 ========================
-[![Build Status](https://travis-ci.org/MickCrozier/timer-stopwatch.svg?branch=master)](https://travis-ci.org/MickCrozier/timer-stopwatch)
 
-[ ![Codeship Status for MickCrozier/timer-stopwatch](https://codeship.io/projects/d68910a0-e989-0131-eba0-368dc75eab9e/status)](https://codeship.io/projects/26196)
+Build Status: [![Codeship Status for MickCrozier/timer-stopwatch](https://codeship.io/projects/d68910a0-e989-0131-eba0-368dc75eab9e/status)](https://codeship.io/projects/26196)
 
 A stopwatch and countdown clock module for node.js
 
