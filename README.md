@@ -20,16 +20,16 @@ npm install timer-stopwatch
 
 How to
 ======
-```
-timer = new Stopwatch([countDownMS], [options])
-```
+**The Gist**
+new Stopwatch([countDownMS], [options])
 
 
+Basic timers
 ```js
 var Stopwatch = require('timer-stopwatch');
 
 var timer = new Stopwatch(60000); // A new countdown timer with 60 seconds
-var clock = new Stopwatch(); // A new count up clock. Starts at 0.
+var stopwatch = new Stopwatch(); // A new count up clock. Starts at 0.
 ```
 
 ###Events
@@ -89,5 +89,4 @@ npm test
 License
 ======
 MIT License
-Copyright 2014 Mick Crozier
 
