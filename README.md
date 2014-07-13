@@ -30,14 +30,13 @@ Basic timers
 var Stopwatch = require('timer-stopwatch');
 
 var timer = new Stopwatch(60000); // A new countdown timer with 60 seconds
-var stopwatch = new Stopwatch(); // A new count up clock. Starts at 0.
+var stopwatch = new Stopwatch(); // A new count up stopwatch. Starts at 0.
 ```
 
 ###Events
 ```js
-// Fires every 10ms by default. Change setting the 'refreshRateMS' options
+// Fires every 50ms by default. Change setting the 'refreshRateMS' options
 timer.on('time', function(time) {
-	console.log(time.clock); // formatted time as mm:ss
 	console.log(time.ms); // number of milliseconds past (or remaining);
 });
 
@@ -46,7 +45,7 @@ timer.on('done', function(){
 	console.log('Timer is complete');
 });
 
-// Fires when the timer is almost complete - default is 10 seconds remaining. Chnage with 'almostDoneMS' option
+// Fires when the timer is almost complete - default is 10 seconds remaining. Change with 'almostDoneMS' option
 timer.on('almostdone', function() {
 	console.log('Timer is almost complete');
 });
@@ -58,13 +57,12 @@ timer.on('almostdone', function() {
 timer.start();
 timer.stop();
 timer.startstop();
-timer.reset();
+timer.reset(countDownMS); // optional countDownMS to reset countdown to that many milliseconds
 ```
 
 ###Properties
 ```js
 timer.ms;		// Number of milliseconds on the clock
-timer.clock;	// The formatted clock as MM:SS
 ```
 
 
@@ -78,6 +76,14 @@ var options = {
 
 var timer = new Stopwatch(60000, options);
 ```
+
+Changes
+======
+####0.1.1
+- Removed clock property and time formatting. Convienience was good, but got confusing at application level. Belongs in the view.
+
+- Reset now optionally accepts a millisecond value to reset the clock to.
+
 
 Testing
 ======
