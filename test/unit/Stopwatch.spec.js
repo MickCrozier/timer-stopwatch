@@ -21,13 +21,17 @@ describe('Countdown Timer', function() {
 	it('should be able to create a countdown watch with 30 seconds', function() {
 		var countdownTimer = new Stopwatch(30000);
 		expect(countdownTimer.countDownMS).to.be(30000);
+		expect(countdownTimer.ms).to.be(30000);
 	});
 
-
-	it('should set the clock to the countdown time', function() {
-		var countdownTimer = new Stopwatch(60000);
-		expect(countdownTimer.clock).to.be('01:00');
+	it('should be able to change the countdown time during reset', function() {
+		var countdownTimer = new Stopwatch(30000);
+		expect(countdownTimer.countDownMS).to.be(30000);
+		countdownTimer.reset(60000);
+		expect(countdownTimer.countDownMS).to.be(60000);
+		expect(countdownTimer.ms).to.be(60000);
 	});
+
 
 	it('should countdown with a normal refresh rate', function(done) {
 		var countdownTimer = new Stopwatch(60000);
