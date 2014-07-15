@@ -109,7 +109,7 @@ describe('Countdown Timer', function() {
 	});
 
 	it('should fire the done event', function(done) {
-		var countdownTimer = new Stopwatch(30, {almostDoneMS:1});
+		var countdownTimer = new Stopwatch(30, {almostDoneMS:20});
 		var startTime = countdownTimer.ms;
 		countdownTimer.start();
 		countdownTimer.on('done',function(){
@@ -119,6 +119,51 @@ describe('Countdown Timer', function() {
 		});
 	});
 
+	it('should fire the done event when done again after reset', function(done) {
+		var countdownTimer = new Stopwatch(40, {almostDoneMS:20, refreshRateMS:10});
+		var startTime = countdownTimer.ms;
+
+		var doneFiredTimes = 0;
+
+		setTimeout(function() {
+			expect(doneFiredTimes).to.be(3);
+			done();
+		}, 350);
+
+		countdownTimer.start();
+		countdownTimer.on('done',function(){
+			doneFiredTimes++;
+			setTimeout(function(){
+				expect(countdownTimer.ms).to.equal(0);
+				countdownTimer.reset();
+				expect(countdownTimer.ms).to.equal(40);
+				countdownTimer.start();
+			}, 100);
+			
+		});
+		
+	});
+
+	it('should fire the almostdDone event when ALMOST done again after reset', function(done) {
+		var countdownTimer = new Stopwatch(40, {almostDoneMS:20, refreshRateMS:10});
+		var startTime = countdownTimer.ms;
+
+		var doneFiredTimes = 0;
+
+		setTimeout(function() {
+			expect(doneFiredTimes).to.be(3);
+			done();
+		}, 350);
+
+		countdownTimer.start();
+		countdownTimer.on('almostdone',function(){
+			doneFiredTimes++;
+			setTimeout(function(){
+				countdownTimer.reset();
+				countdownTimer.start();
+			}, 100);
+		});
+	});
 });
 
 describe('Stopwatch', function() {
