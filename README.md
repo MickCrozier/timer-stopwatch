@@ -78,7 +78,7 @@ Changes
 
 - Reset now optionally accepts a millisecond value to reset the clock to.
 
-####0.1.3
+####0.1.4
 - Bug Fixes
 
 Testing

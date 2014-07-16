@@ -143,9 +143,15 @@ describe('Countdown Timer', function() {
 			doneFiredTimes++;
 			setTimeout(function(){
 				expect(countdownTimer.ms).to.equal(0);
+				expect(countdownTimer.doneFired).to.equal(true);
 				countdownTimer.reset();
 				expect(countdownTimer.ms).to.equal(40);
 				countdownTimer.start();
+				setTimeout(function(){
+					expect(countdownTimer.doneFired).to.equal(false);
+					expect(countdownTimer.ms).to.be.above(15);
+					expect(countdownTimer.ms).to.be.below(31);
+				}, 20);
 			}, 100);	
 		};
 
