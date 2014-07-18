@@ -1,6 +1,6 @@
 {
   "name": "timer-stopwatch",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A stopwatch and countdown timer for node",
   "author": "Mick Crozier <mick@backstagesolutions.com.au>",
   "repository": "https://github.com/MickCrozier/timer-stopwatch",

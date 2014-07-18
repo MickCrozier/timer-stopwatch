@@ -81,6 +81,9 @@ Changes
 ####0.1.4
 - Bug Fixes
 
+####0.1.5
+- Emit time event on reset
+
 Testing
 ======
 
