@@ -50,7 +50,7 @@ timer.on('almostdone', function() {
 ```js
 timer.start();
 timer.stop();
-timer.startstop();
+timer.startstop(); // toggle the state of the timer. (If started, stop it. If stopped, start it.)
 timer.reset(countDownMS); // optional countDownMS to reset countdown to that many milliseconds
 ```
 
