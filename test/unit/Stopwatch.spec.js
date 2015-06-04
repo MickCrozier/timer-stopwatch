@@ -185,6 +185,20 @@ describe('Countdown Timer', function() {
 
 		countdownTimer.on('almostdone', onDone);
 	});
+
+	it('should fire the forcestop event', function(done) {
+		var countdownTimer = new Stopwatch(50, {almostDoneMS:20});
+
+		var onForceStop = function onForceStop(){
+			expect(true).to.equal(true);
+			countdownTimer.removeListener('forcestop', onForceStop);
+			done();
+		};
+
+		countdownTimer.start();
+		countdownTimer.on('forcestop', onForceStop);
+		countdownTimer.stop();
+	});
 });
 
 describe('Stopwatch', function() {
@@ -316,6 +330,20 @@ describe('Stopwatch', function() {
 			expect(fired).to.be(false);
 			done();
 		}, 60);
+	});
+
+	it('should fire the forcestop event', function(done) {
+		var stopwatch = new Stopwatch();
+
+		var onForceStop = function onForceStop(){
+			expect(true).to.equal(true);
+			stopwatch.removeListener('forcestop', onForceStop);
+			done();
+		};
+
+		stopwatch.start();
+		stopwatch.on('forcestop', onForceStop);
+		stopwatch.stop();
 	});
 
 });

@@ -11,3 +11,6 @@ Changelog
 
 ####0.1.5
 - Emit time event on reset
+
+####0.1.6
+- Emit forcestop when the clock is stopped
