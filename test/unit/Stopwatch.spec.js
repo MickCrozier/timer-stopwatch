@@ -34,7 +34,7 @@ describe('Countdown Timer', function() {
 
 
 	it('should countdown with a normal refresh rate', function(done) {
-		var countdownTimer = new Stopwatch(60000);
+		var countdownTimer = new Stopwatch(60000, {refreshRateMS:50});
 		var startTime = countdownTimer.ms;
 		countdownTimer.start();
 		setTimeout(function(){
@@ -87,13 +87,15 @@ describe('Countdown Timer', function() {
 	it('should fire the time event', function(done) {
 		var countdownTimer = new Stopwatch(60000);
 		var startTime = countdownTimer.ms;
-		countdownTimer.start();
+		
 		countdownTimer.on('time',function(time){
-			countdownTimer.stop();
-			expect(countdownTimer.ms).to.be.below(startTime);
 			expect(time.ms).to.equal(countdownTimer.ms);
-			done();
+			if(countdownTimer.state === 1) {
+				done();
+			}
+			countdownTimer.stop();
 		});
+		countdownTimer.start();
 	});
 
 	it('should fire the almostdone event', function(done) {
@@ -117,7 +119,6 @@ describe('Countdown Timer', function() {
 		var startTime = countdownTimer.ms;
 
 		var onDone = function onDone(){
-			countdownTimer.stop();
 			expect(countdownTimer.ms).to.equal(0);
 			countdownTimer.removeListener('done', onDone);
 			done();
@@ -189,14 +190,14 @@ describe('Countdown Timer', function() {
 	it('should fire the forcestop event', function(done) {
 		var countdownTimer = new Stopwatch(50, {almostDoneMS:20});
 
-		var onForceStop = function onForceStop(){
+		var onStop = function onStop(){
 			expect(true).to.equal(true);
-			countdownTimer.removeListener('forcestop', onForceStop);
+			countdownTimer.removeListener('stop', onStop);
 			done();
 		};
 
 		countdownTimer.start();
-		countdownTimer.on('forcestop', onForceStop);
+		countdownTimer.on('stop', onStop);
 		countdownTimer.stop();
 	});
 });
@@ -220,7 +221,7 @@ describe('Stopwatch', function() {
 
 
 	it('should count up with a moderate refresh rate', function(done) {
-		var stopwatch = new Stopwatch();
+		var stopwatch = new Stopwatch(false, {refreshRateMS:50});
 		var startTime = stopwatch.ms;
 		stopwatch.start();
 		setTimeout(function(){
@@ -296,13 +297,14 @@ describe('Stopwatch', function() {
 	it('should fire the time event', function(done) {
 		var stopwatch = new Stopwatch();
 		var startTime = stopwatch.ms;
-		stopwatch.start();
 		stopwatch.on('time',function(time){
-			stopwatch.stop();
-			expect(stopwatch.ms).to.be.above(startTime);
 			expect(time.ms).to.equal(stopwatch.ms);
-			done();
+			if(stopwatch.state === 1) {
+				done();
+			}
+			stopwatch.stop();
 		});
+		stopwatch.start();
 	});
 
 	it('should NOT fire the almostdone event', function(done) {
@@ -332,17 +334,17 @@ describe('Stopwatch', function() {
 		}, 60);
 	});
 
-	it('should fire the forcestop event', function(done) {
+	it('should fire the stop event', function(done) {
 		var stopwatch = new Stopwatch();
 
-		var onForceStop = function onForceStop(){
+		var onStop = function onStop(){
 			expect(true).to.equal(true);
-			stopwatch.removeListener('forcestop', onForceStop);
+			stopwatch.removeListener('stop', onStop);
 			done();
 		};
 
 		stopwatch.start();
-		stopwatch.on('forcestop', onForceStop);
+		stopwatch.on('stop', onStop);
 		stopwatch.stop();
 	});
 

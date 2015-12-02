@@ -27,30 +27,33 @@ var timer = new Stopwatch(60000); // A new countdown timer with 60 seconds
 var stopwatch = new Stopwatch(); // A new count up stopwatch. Starts at 0.
 ```
 
-###Events
+###Event Methods
 ```js
 // Fires every 50ms by default. Change setting the 'refreshRateMS' options
-timer.on('time', function(time) {
+timer.onTime(function(time) {
 	console.log(time.ms); // number of milliseconds past (or remaining);
 });
 
 // Fires when the timer is done
-timer.on('done', function(){
+timer.onDone(function(){
 	console.log('Timer is complete');
 });
 
 // Fires when the timer is almost complete - default is 10 seconds remaining. Change with 'almostDoneMS' option
-timer.on('almostdone', function() {
+timer.onAlmostdone(function() {
 	console.log('Timer is almost complete');
 });
 
+These methods are chainable
+timer.onTime(cb).onAlmostdone(cb).onDone(cb);
+
 ```
 
-###Methods
+###Timer Methods
 ```js
 timer.start();
 timer.stop();
-timer.startstop();
+timer.startstop();        // Toggles the running state
 timer.reset(countDownMS); // optional countDownMS to reset countdown to that many milliseconds
 ```
 
@@ -71,7 +74,11 @@ var options = {
 var timer = new Stopwatch(60000, options);
 ```
 
+Breaking Changes in v0.2
+======
 
+- The 'forcestop' event is being depreciated in favour of 'stop'.
+- Use the onTime, onAlmostDone, onDone and onStop methods in favour of .on('eventname').
 
 Testing
 ======
