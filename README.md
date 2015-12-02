@@ -44,7 +44,7 @@ timer.onAlmostdone(function() {
 	console.log('Timer is almost complete');
 });
 
-These methods are chainable
+//These methods are chainable
 timer.onTime(cb).onAlmostdone(cb).onDone(cb);
 
 ```
