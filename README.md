@@ -32,6 +32,7 @@ var stopwatch = new Stopwatch(); // A new count up stopwatch. Starts at 0.
 // Fires every 50ms by default. Change setting the 'refreshRateMS' options
 timer.onTime(function(time) {
 	console.log(time.ms); // number of milliseconds past (or remaining);
+	console.log(time.seconds); // number of seconds past (or remaining);
 });
 
 // Fires when the timer is done
@@ -60,6 +61,7 @@ timer.reset(countDownMS); // optional countDownMS to reset countdown to that man
 ###Properties
 ```js
 timer.ms;		// Number of milliseconds on the clock
+timer.seconds;		// Number of seconds on the clock
 ```
 
 
