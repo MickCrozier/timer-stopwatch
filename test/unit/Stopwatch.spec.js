@@ -336,7 +336,7 @@ describe('Stopwatch', function() {
 
 	it('should fire the stop event', function(done) {
 		var stopwatch = new Stopwatch();
-
+		
 		var onStop = function onStop(){
 			expect(true).to.equal(true);
 			stopwatch.removeListener('stop', onStop);
@@ -346,6 +346,20 @@ describe('Stopwatch', function() {
 		stopwatch.start();
 		stopwatch.on('stop', onStop);
 		stopwatch.stop();
+	});
+
+	it('should lap the time',function(done){
+		var stopwatch = new Stopwatch(200,{refreshRateMS:10});
+		stopwatch.start();
+		setTimeout(function(){
+			stopwatch.lap();		
+		},10);
+		setTimeout(function(){
+			stopwatch.stop();
+			let lap = stopwatch.lap();
+			expect(lap <= 12 && lap>=10).to.be(true);
+			done();
+		},20);
 	});
 
 });
