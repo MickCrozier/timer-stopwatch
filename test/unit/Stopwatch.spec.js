@@ -349,17 +349,26 @@ describe('Stopwatch', function() {
 	});
 
 	it('should lap the time',function(done){
-		var stopwatch = new Stopwatch(200,{refreshRateMS:10});
+		var stopwatch = new Stopwatch(200,{refreshRateMS:1});
 		stopwatch.start();
 		setTimeout(function(){
-			stopwatch.lap();		
+			stopwatch.lap();
+			console.log("first lap");		
 		},10);
 		setTimeout(function(){
+			stopwatch.lap();
+			console.log("second lap");
+		},20);
+		setTimeout(function(){
+			stopwatch.lap();
+			console.log("third lap")
+		},30)
+		setTimeout(function(){
 			stopwatch.stop();
-			let lap = stopwatch.lap();
+			var lap = stopwatch.lap();
 			expect(lap <= 12 && lap>=10).to.be(true);
 			done();
-		},20);
+		},40)
 	});
 
 });
