@@ -200,6 +200,66 @@ describe('Countdown Timer', function() {
 		countdownTimer.on('stop', onStop);
 		countdownTimer.stop();
 	});
+
+	it('should lap the time',function(done){
+		var countdownTimer = new Stopwatch(50,{refreshRateMS:1});
+		countdownTimer.start();
+		setTimeout(function(){
+			countdownTimer.lap();
+		},10);
+		setTimeout(function(){
+			countdownTimer.lap();
+		},20);
+		setTimeout(function(){
+			countdownTimer.lap();
+		},30)
+		setTimeout(function(){
+			countdownTimer.stop();
+			var lap = countdownTimer.lap();
+			expect(lap <= 12 && lap>=10).to.be(true);
+			done();
+		},40)
+	});
+
+	it('should lap the time after a reset',function(done){
+		var countdownTimer = new Stopwatch(50,{refreshRateMS:1});
+		countdownTimer.start();
+		setTimeout(function(){
+			countdownTimer.lap();
+		},10);
+		setTimeout(function(){
+			countdownTimer.lap();
+			countdownTimer.reset();
+			countdownTimer.start();
+		},20);
+		setTimeout(function(){
+			countdownTimer.lap();
+		},30)
+		setTimeout(function(){
+			countdownTimer.stop();
+			var lap = countdownTimer.lap();
+			expect(lap <= 12 && lap>=10).to.be(true);
+			done();
+		},40)
+	});
+	it('should lap the time after a stop and start',function(done){
+		var countdownTimer = new Stopwatch(50,{refreshRateMS:1});
+		countdownTimer.start();
+		setTimeout(function(){
+			countdownTimer.lap();
+			countdownTimer.stop();
+		},10);
+		setTimeout(function(){
+			countdownTimer.start();
+		},20);
+		setTimeout(function(){
+			countdownTimer.stop();
+			var lap = countdownTimer.lap();
+			expect(lap <= 12 && lap>=10).to.be(true);
+			done();
+		},30)	
+	});
+	
 });
 
 describe('Stopwatch', function() {
@@ -349,19 +409,16 @@ describe('Stopwatch', function() {
 	});
 
 	it('should lap the time',function(done){
-		var stopwatch = new Stopwatch(200,{refreshRateMS:1});
+		var stopwatch = new Stopwatch({refreshRateMS:1});
 		stopwatch.start();
 		setTimeout(function(){
-			stopwatch.lap();
-			console.log("first lap");		
+			stopwatch.lap();		
 		},10);
 		setTimeout(function(){
 			stopwatch.lap();
-			console.log("second lap");
 		},20);
 		setTimeout(function(){
 			stopwatch.lap();
-			console.log("third lap")
 		},30)
 		setTimeout(function(){
 			stopwatch.stop();
@@ -369,6 +426,36 @@ describe('Stopwatch', function() {
 			expect(lap <= 12 && lap>=10).to.be(true);
 			done();
 		},40)
+	});
+
+	it('should have the lap time at zero without starting the timer',function(done){
+		var stopwatch = new Stopwatch({refreshRateMS:1});
+		setTimeout(function(){
+			stopwatch.lap();
+		},10);
+		setTimeout(function(){
+			stopwatch.lap();
+		},20);
+		setTimeout(function(){
+			stopwatch.lap();
+		},30)
+		setTimeout(function(){
+			stopwatch.stop();
+			var lap = stopwatch.lap();
+			expect(lap).to.be(0);
+			done();
+		},40)
+	});
+
+	it('should have elapsed time higher than the 0 at max refresh speed', function(done) {
+		var stopwatch = new Stopwatch({refreshRateMS:1});
+		stopwatch.start();
+		var startTime = stopwatch.ms;
+		setTimeout(function(){
+			stopwatch.stop();
+			expect(stopwatch.ms).to.be.above(startTime);
+			done();
+		}, 3);
 	});
 
 });
