@@ -55,6 +55,7 @@ timer.start();
 timer.stop();
 timer.startstop();        // Toggles the running state
 timer.reset(countDownMS); // optional countDownMS to reset countdown to that many milliseconds
+timer.lap();		      //gets the time from when the last lap was called
 ```
 
 ###Properties
@@ -72,6 +73,8 @@ var options = {
 }
 
 var timer = new Stopwatch(60000, options);
+
+var timer = new Stopwatch(options);
 ```
 
 Breaking Changes in v0.2
