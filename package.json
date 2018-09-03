@@ -12,7 +12,7 @@
     "countdown"
   ],
   "dependencies": {
-    "lodash": "^2.4.1"
+    "lodash.assignin": "^4.2.0"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
