@@ -1,476 +1,466 @@
-
 /////////////////////////////////////////////////////
-var expect = require('expect.js');			/////////
+var expect = require("expect.js"); /////////
 /////////////////////////////////////////////////////
 
+describe("Countdown Timer", function() {
+  var Stopwatch = null;
 
+  beforeEach(function() {
+    Stopwatch = require("../../lib/Stopwatch.js");
+  });
 
+  afterEach(function() {});
 
-describe('Countdown Timer', function() {
-	
-	var Stopwatch = null;
+  it("should be able to create a countdown watch with 30 seconds", function() {
+    var countdownTimer = new Stopwatch(30000);
+    expect(countdownTimer.countDownMS).to.be(30000);
+    expect(countdownTimer.ms).to.be(30000);
+  });
 
-	beforeEach(function() {
-		Stopwatch = require('../../lib/Stopwatch.js');
-	});
-	
-	afterEach(function() {
-		
-	});
+  it("should be able to change the countdown time during reset", function() {
+    var countdownTimer = new Stopwatch(30000);
+    expect(countdownTimer.countDownMS).to.be(30000);
+    countdownTimer.reset(60000);
+    expect(countdownTimer.countDownMS).to.be(60000);
+    expect(countdownTimer.ms).to.be(60000);
+  });
 
-	it('should be able to create a countdown watch with 30 seconds', function() {
-		var countdownTimer = new Stopwatch(30000);
-		expect(countdownTimer.countDownMS).to.be(30000);
-		expect(countdownTimer.ms).to.be(30000);
-	});
+  it("should countdown with a normal refresh rate", function(done) {
+    var countdownTimer = new Stopwatch(60000, { refreshRateMS: 50 });
+    var startTime = countdownTimer.ms;
+    countdownTimer.start();
+    setTimeout(function() {
+      expect(countdownTimer.ms).to.be.above(59998);
+    }, 10);
 
-	it('should be able to change the countdown time during reset', function() {
-		var countdownTimer = new Stopwatch(30000);
-		expect(countdownTimer.countDownMS).to.be(30000);
-		countdownTimer.reset(60000);
-		expect(countdownTimer.countDownMS).to.be(60000);
-		expect(countdownTimer.ms).to.be(60000);
-	});
+    setTimeout(function() {
+      countdownTimer.stop();
+      expect(countdownTimer.ms).to.be.below(startTime);
+      done();
+    }, 70);
+  });
 
+  it("should countdown at max refresh speed", function(done) {
+    var countdownTimer = new Stopwatch(60000, { refreshRateMS: 1 });
+    var startTime = countdownTimer.ms;
+    countdownTimer.start();
+    setTimeout(function() {
+      countdownTimer.stop();
+      expect(countdownTimer.ms).to.be.below(startTime);
+      done();
+    }, 3);
+  });
 
-	it('should countdown with a normal refresh rate', function(done) {
-		var countdownTimer = new Stopwatch(60000, {refreshRateMS:50});
-		var startTime = countdownTimer.ms;
-		countdownTimer.start();
-		setTimeout(function(){
-			expect(countdownTimer.ms).to.be.above(59998);
-		}, 10);
+  it("should countdown, pause, then continue", function(done) {
+    var countdownTimer = new Stopwatch(50, { refreshRateMS: 1 });
+    var startTime = countdownTimer.ms;
+    var splittime = 0;
+    countdownTimer.start();
+    setTimeout(function() {
+      countdownTimer.stop();
+      splittime = countdownTimer.ms;
+      expect(splittime).to.be.below(startTime);
+    }, 10);
 
-		setTimeout(function(){
-			countdownTimer.stop();
-			expect(countdownTimer.ms).to.be.below(startTime);
-			done();
-		}, 70);
-	});
+    setTimeout(function() {
+      expect(splittime).to.be(countdownTimer.ms);
+      countdownTimer.start();
+    }, 20);
 
-	it('should countdown at max refresh speed', function(done) {
-		var countdownTimer = new Stopwatch(60000, {refreshRateMS:1});
-		var startTime = countdownTimer.ms;
-		countdownTimer.start();
-		setTimeout(function(){
-			countdownTimer.stop();
-			expect(countdownTimer.ms).to.be.below(startTime);
-			done();
-		}, 3);
-	});
+    setTimeout(function() {
+      countdownTimer.stop();
+      expect(countdownTimer.ms).to.be.below(splittime);
+      done();
+    }, 30);
+  });
 
+  it("should fire the time event", function(done) {
+    var countdownTimer = new Stopwatch(60000);
+    var startTime = countdownTimer.ms;
 
-	it('should countdown, pause, then continue', function(done) {
-		var countdownTimer = new Stopwatch(50, {refreshRateMS:1});
-		var startTime = countdownTimer.ms;
-		var splittime = 0;
-		countdownTimer.start();
-		setTimeout(function(){
-			countdownTimer.stop();
-			splittime = countdownTimer.ms;
-			expect(splittime).to.be.below(startTime);
-		}, 10);
+    countdownTimer.on("time", function(time) {
+      expect(time.ms).to.equal(countdownTimer.ms);
+      if (countdownTimer.state === 1) {
+        done();
+      }
+      countdownTimer.stop();
+    });
+    countdownTimer.start();
+  });
 
-		setTimeout(function(){
-			expect(splittime).to.be(countdownTimer.ms);
-			countdownTimer.start();
-		}, 20);
+  it("should fire the almostdone event", function(done) {
+    var countdownTimer = new Stopwatch(40, {
+      almostDoneMS: 20,
+      refreshRateMS: 10
+    });
+    var startTime = countdownTimer.ms;
 
-		setTimeout(function(){
-			countdownTimer.stop();
-			expect(countdownTimer.ms).to.be.below(splittime);
-			done();
-		}, 30);
-	});
+    var onDone = function onDone() {
+      countdownTimer.stop();
+      expect(countdownTimer.ms).to.below(20);
+      expect(countdownTimer.ms).to.above(5);
+      countdownTimer.removeListener("almostdone", onDone);
+      done();
+    };
 
+    countdownTimer.start();
+    countdownTimer.on("almostdone", onDone);
+  });
 
-	it('should fire the time event', function(done) {
-		var countdownTimer = new Stopwatch(60000);
-		var startTime = countdownTimer.ms;
-		
-		countdownTimer.on('time',function(time){
-			expect(time.ms).to.equal(countdownTimer.ms);
-			if(countdownTimer.state === 1) {
-				done();
-			}
-			countdownTimer.stop();
-		});
-		countdownTimer.start();
-	});
+  it("should fire the done event", function(done) {
+    var countdownTimer = new Stopwatch(30, { almostDoneMS: 20 });
+    var startTime = countdownTimer.ms;
 
-	it('should fire the almostdone event', function(done) {
-		var countdownTimer = new Stopwatch(40, {almostDoneMS:20, refreshRateMS:10});
-		var startTime = countdownTimer.ms;
+    var onDone = function onDone() {
+      expect(countdownTimer.ms).to.equal(0);
+      countdownTimer.removeListener("done", onDone);
+      done();
+    };
 
-		var onDone = function onDone(){
-			countdownTimer.stop();
-			expect(countdownTimer.ms).to.below(20);
-			expect(countdownTimer.ms).to.above(5);
-			countdownTimer.removeListener('almostdone', onDone);
-			done();
-		};
+    countdownTimer.start();
+    countdownTimer.on("done", onDone);
+  });
 
-		countdownTimer.start();
-		countdownTimer.on('almostdone', onDone);
-	});
+  it("should fire the done event when done again after reset", function(done) {
+    var countdownTimer = new Stopwatch(40, {
+      almostDoneMS: 20,
+      refreshRateMS: 10
+    });
+    var startTime = countdownTimer.ms;
 
-	it('should fire the done event', function(done) {
-		var countdownTimer = new Stopwatch(30, {almostDoneMS:20});
-		var startTime = countdownTimer.ms;
+    var doneFiredTimes = 0;
 
-		var onDone = function onDone(){
-			expect(countdownTimer.ms).to.equal(0);
-			countdownTimer.removeListener('done', onDone);
-			done();
-		};
+    setTimeout(function() {
+      expect(doneFiredTimes).to.be(3);
+      countdownTimer.removeListener("done", onDone);
+      done();
+    }, 350);
 
-		countdownTimer.start();
-		countdownTimer.on('done', onDone);
-	});
+    var onDone = function onDone() {
+      doneFiredTimes++;
+      setTimeout(function() {
+        expect(countdownTimer.ms).to.equal(0);
+        expect(countdownTimer.doneFired).to.equal(true);
+        countdownTimer.reset();
+        expect(countdownTimer.ms).to.equal(40);
+        countdownTimer.start();
+        setTimeout(function() {
+          expect(countdownTimer.doneFired).to.equal(false);
+          expect(countdownTimer.ms).to.be.above(15);
+          expect(countdownTimer.ms).to.be.below(31);
+        }, 20);
+      }, 100);
+    };
 
-	it('should fire the done event when done again after reset', function(done) {
-		var countdownTimer = new Stopwatch(40, {almostDoneMS:20, refreshRateMS:10});
-		var startTime = countdownTimer.ms;
+    countdownTimer.start();
+    countdownTimer.on("done", onDone);
+  });
 
-		var doneFiredTimes = 0;
+  it("should fire the almostdDone event when ALMOST done again after reset", function(done) {
+    var countdownTimer = new Stopwatch(40, {
+      almostDoneMS: 20,
+      refreshRateMS: 10
+    });
+    var startTime = countdownTimer.ms;
 
-		setTimeout(function() {
-			expect(doneFiredTimes).to.be(3);
-			countdownTimer.removeListener('done', onDone);
-			done();
-		}, 350);
+    var doneFiredTimes = 0;
 
-		var onDone = function onDone(){
-			doneFiredTimes++;
-			setTimeout(function(){
-				expect(countdownTimer.ms).to.equal(0);
-				expect(countdownTimer.doneFired).to.equal(true);
-				countdownTimer.reset();
-				expect(countdownTimer.ms).to.equal(40);
-				countdownTimer.start();
-				setTimeout(function(){
-					expect(countdownTimer.doneFired).to.equal(false);
-					expect(countdownTimer.ms).to.be.above(15);
-					expect(countdownTimer.ms).to.be.below(31);
-				}, 20);
-			}, 100);	
-		};
+    setTimeout(function() {
+      expect(doneFiredTimes).to.be(3);
+      countdownTimer.removeListener("almostdone", onDone);
+      done();
+    }, 350);
 
-		countdownTimer.start();
-		countdownTimer.on('done', onDone);
-		
-	});
+    var onDone = function onDone() {
+      doneFiredTimes++;
+      setTimeout(function() {
+        countdownTimer.reset();
+        countdownTimer.start();
+      }, 100);
+    };
 
-	it('should fire the almostdDone event when ALMOST done again after reset', function(done) {
-		var countdownTimer = new Stopwatch(40, {almostDoneMS:20, refreshRateMS:10});
-		var startTime = countdownTimer.ms;
+    countdownTimer.start();
 
-		var doneFiredTimes = 0;
+    countdownTimer.on("almostdone", onDone);
+  });
 
-		setTimeout(function() {
-			expect(doneFiredTimes).to.be(3);
-			countdownTimer.removeListener('almostdone', onDone);
-			done();
-		}, 350);
+  it("should fire the forcestop event", function(done) {
+    var countdownTimer = new Stopwatch(50, { almostDoneMS: 20 });
 
+    var onStop = function onStop() {
+      expect(true).to.equal(true);
+      countdownTimer.removeListener("stop", onStop);
+      done();
+    };
 
-		var onDone = function onDone(){
-			doneFiredTimes++;
-			setTimeout(function(){
-				countdownTimer.reset();
-				countdownTimer.start();
-			}, 100);
-		};
+    countdownTimer.start();
+    countdownTimer.on("stop", onStop);
+    countdownTimer.stop();
+  });
 
-		countdownTimer.start();
+  it("should lap the time", function(done) {
+    var countdownTimer = new Stopwatch(50, { refreshRateMS: 1 });
+    countdownTimer.start();
 
-		countdownTimer.on('almostdone', onDone);
-	});
+    setTimeout(function() {
+      countdownTimer.lap();
+    }, 10);
 
-	it('should fire the forcestop event', function(done) {
-		var countdownTimer = new Stopwatch(50, {almostDoneMS:20});
+    setTimeout(function() {
+      countdownTimer.lap();
+    }, 20);
 
-		var onStop = function onStop(){
-			expect(true).to.equal(true);
-			countdownTimer.removeListener('stop', onStop);
-			done();
-		};
+    setTimeout(function() {
+      countdownTimer.lap();
+    }, 30);
+    setTimeout(function() {
+      countdownTimer.stop();
+      var lap = countdownTimer.lap();
+      expect(lap <= 12 && lap >= 10).to.be(true);
+      done();
+    }, 40);
+  });
 
-		countdownTimer.start();
-		countdownTimer.on('stop', onStop);
-		countdownTimer.stop();
-	});
+  it("should lap the time after a reset", function(done) {
+    var countdownTimer = new Stopwatch(50, { refreshRateMS: 1 });
+    countdownTimer.start();
 
-	it('should lap the time', function(done) {
-		var countdownTimer = new Stopwatch(50,{refreshRateMS:1});
-		countdownTimer.start();
+    setTimeout(function() {
+      countdownTimer.lap();
+    }, 10);
 
-		setTimeout(function() {
-			countdownTimer.lap();
-		}, 10);
+    setTimeout(function() {
+      countdownTimer.lap();
+      countdownTimer.reset();
+      countdownTimer.start();
+    }, 20);
 
-		setTimeout(function() {
-			countdownTimer.lap();
-		}, 20);
+    setTimeout(function() {
+      countdownTimer.lap();
+    }, 30);
 
-		setTimeout(function() {
-			countdownTimer.lap();
-		}, 30);
-		setTimeout(function() {
-			countdownTimer.stop();
-			var lap = countdownTimer.lap();
-			expect(lap <= 12 && lap>=10).to.be(true);
-			done();
-		}, 40);
-	});
-
-	it('should lap the time after a reset', function(done) {
-		var countdownTimer = new Stopwatch(50,{refreshRateMS:1});
-		countdownTimer.start();
-
-		setTimeout(function() {
-			countdownTimer.lap();
-		}, 10);
-
-		setTimeout(function() {
-			countdownTimer.lap();
-			countdownTimer.reset();
-			countdownTimer.start();
-		}, 20);
-
-		setTimeout(function() {
-			countdownTimer.lap();
-		}, 30);
-
-		setTimeout(function() {
-			countdownTimer.stop();
-			var lap = countdownTimer.lap();
-			expect(lap <= 12 && lap>=10).to.be(true);
-			done();
-		}, 40);
-	});
-	it('should lap the time after a stop and start',function(done){
-		var countdownTimer = new Stopwatch(50,{refreshRateMS:1});
-		countdownTimer.start();
-		setTimeout(function(){
-			countdownTimer.lap();
-			countdownTimer.stop();
-		},10);
-		setTimeout(function(){
-			countdownTimer.start();
-		},20);
-		setTimeout(function(){
-			countdownTimer.stop();
-			var lap = countdownTimer.lap();
-			expect(lap <= 12 && lap>=10).to.be(true);
-			done();
-		},30)	
-	});
-	
+    setTimeout(function() {
+      countdownTimer.stop();
+      var lap = countdownTimer.lap();
+      expect(lap <= 12 && lap >= 10).to.be(true);
+      done();
+    }, 40);
+  });
+  it("should lap the time after a stop and start", function(done) {
+    var countdownTimer = new Stopwatch(50, { refreshRateMS: 1 });
+    countdownTimer.start();
+    setTimeout(function() {
+      countdownTimer.lap();
+      countdownTimer.stop();
+    }, 10);
+    setTimeout(function() {
+      countdownTimer.start();
+    }, 20);
+    setTimeout(function() {
+      countdownTimer.stop();
+      var lap = countdownTimer.lap();
+      expect(lap <= 12 && lap >= 10).to.be(true);
+      done();
+    }, 30);
+  });
 });
 
-describe('Stopwatch', function() {
-	
-	var Stopwatch = null;
+describe("Stopwatch", function() {
+  var Stopwatch = null;
 
-	beforeEach(function() {
-		Stopwatch = require('../../lib/Stopwatch.js');
-	});
-	
-	afterEach(function() {
-		
-	});
+  beforeEach(function() {
+    Stopwatch = require("../../lib/Stopwatch.js");
+  });
 
-	it('should be able to create a stopwatch', function() {
-		var countdownTimer = new Stopwatch();
-		expect(countdownTimer.countDownMS).to.be(false);
-	});
+  afterEach(function() {});
 
+  it("should be able to create a stopwatch", function() {
+    var countdownTimer = new Stopwatch();
+    expect(countdownTimer.countDownMS).to.be(false);
+  });
 
-	it('should count up with a moderate refresh rate', function(done) {
-		var stopwatch = new Stopwatch(false, {refreshRateMS:50});
-		var startTime = stopwatch.ms;
-		stopwatch.start();
-		setTimeout(function(){
-			expect(stopwatch.ms).to.be.equal(startTime);
-		}, 30);
+  it("should count up with a moderate refresh rate", function(done) {
+    var stopwatch = new Stopwatch(false, { refreshRateMS: 50 });
+    var startTime = stopwatch.ms;
+    stopwatch.start();
+    setTimeout(function() {
+      expect(stopwatch.ms).to.be.equal(startTime);
+    }, 30);
 
-		setTimeout(function(){
-			stopwatch.stop();
-			expect(stopwatch.ms).to.be.above(startTime);
-			done();
-		}, 60);
-	});
+    setTimeout(function() {
+      stopwatch.stop();
+      expect(stopwatch.ms).to.be.above(startTime);
+      done();
+    }, 60);
+  });
 
-	it('should countup at max refresh speed', function(done) {
-		var stopwatch = new Stopwatch(false, {refreshRateMS:1});
-		var startTime = stopwatch.ms;
-		stopwatch.start();
-		setTimeout(function(){
-			stopwatch.stop();
-			expect(stopwatch.ms).to.be.above(startTime);
-			done();
-		}, 3);
-	});
+  it("should countup at max refresh speed", function(done) {
+    var stopwatch = new Stopwatch(false, { refreshRateMS: 1 });
+    var startTime = stopwatch.ms;
+    stopwatch.start();
+    setTimeout(function() {
+      stopwatch.stop();
+      expect(stopwatch.ms).to.be.above(startTime);
+      done();
+    }, 3);
+  });
 
+  it("should countup, pause, then continue", function(done) {
+    var stopwatch = new Stopwatch(false, { refreshRateMS: 1 });
+    var startTime = stopwatch.ms;
+    var splittime = 0;
+    stopwatch.start();
+    setTimeout(function() {
+      stopwatch.startstop();
+      splittime = stopwatch.ms;
+      expect(splittime).to.be.above(startTime);
+    }, 10);
 
-	it('should countup, pause, then continue', function(done) {
-		var stopwatch = new Stopwatch(false, {refreshRateMS:1});
-		var startTime = stopwatch.ms;
-		var splittime = 0;
-		stopwatch.start();
-		setTimeout(function(){
-			stopwatch.startstop();
-			splittime = stopwatch.ms;
-			expect(splittime).to.be.above(startTime);
-		}, 10);
+    setTimeout(function() {
+      expect(splittime).to.be(stopwatch.ms);
+      stopwatch.startstop();
+    }, 20);
 
-		setTimeout(function(){
-			expect(splittime).to.be(stopwatch.ms);
-			stopwatch.startstop();
-		}, 20);
+    setTimeout(function() {
+      stopwatch.startstop();
+      expect(stopwatch.ms).to.be.above(splittime);
+      done();
+    }, 30);
+  });
 
-		setTimeout(function(){
-			stopwatch.startstop();
-			expect(stopwatch.ms).to.be.above(splittime);
-			done();
-		}, 30);
-	});
+  it("Should reset to 0", function(done) {
+    var stopwatch = new Stopwatch(false, { refreshRateMS: 1 });
 
-	it('Should reset to 0', function(done) {
-		var stopwatch = new Stopwatch(false, {refreshRateMS:1});
+    stopwatch.startstop();
 
-		stopwatch.startstop();
+    setTimeout(function() {
+      expect(stopwatch.ms).to.be.above(90);
+      expect(stopwatch.ms).to.be.below(110);
+      stopwatch.reset();
+      expect(stopwatch.ms).to.be(0);
+      setTimeout(function() {
+        stopwatch.startstop();
+        setTimeout(function() {
+          expect(stopwatch.ms).to.be.above(90);
+          expect(stopwatch.ms).to.be.below(110);
+          stopwatch.reset();
+          expect(stopwatch.ms).to.be(0);
+          done();
+        }, 100);
+      }, 100);
+    }, 100);
+  });
 
-		setTimeout(function(){
-			expect(stopwatch.ms).to.be.above(90);
-			expect(stopwatch.ms).to.be.below(110);
-			stopwatch.reset();
-			expect(stopwatch.ms).to.be(0);
-			setTimeout(function(){
-				stopwatch.startstop();
-				setTimeout(function(){
-					expect(stopwatch.ms).to.be.above(90);
-					expect(stopwatch.ms).to.be.below(110);
-					stopwatch.reset();	
-					expect(stopwatch.ms).to.be(0);
-					done();
-				}, 100);
-			}, 100);
-		}, 100);
-	});
+  it("should fire the time event", function(done) {
+    var stopwatch = new Stopwatch();
+    var startTime = stopwatch.ms;
+    stopwatch.on("time", function(time) {
+      expect(time.ms).to.equal(stopwatch.ms);
+      if (stopwatch.state === 1) {
+        done();
+      }
+      stopwatch.stop();
+    });
+    stopwatch.start();
+  });
 
+  it("should NOT fire the almostdone event", function(done) {
+    var stopwatch = new Stopwatch(false, {
+      almostDoneMS: 50,
+      refreshRateMS: 10
+    });
+    stopwatch.start();
+    var fired = false;
+    stopwatch.on("almostdone", function(formatted, ms) {
+      fired = true;
+    });
+    setTimeout(function() {
+      expect(fired).to.be(false);
+      done();
+    }, 60);
+  });
 
-	it('should fire the time event', function(done) {
-		var stopwatch = new Stopwatch();
-		var startTime = stopwatch.ms;
-		stopwatch.on('time',function(time){
-			expect(time.ms).to.equal(stopwatch.ms);
-			if(stopwatch.state === 1) {
-				done();
-			}
-			stopwatch.stop();
-		});
-		stopwatch.start();
-	});
+  it("should NOT fire the done event", function(done) {
+    var stopwatch = new Stopwatch();
+    stopwatch.start();
+    var fired = false;
+    stopwatch.on("done", function(formatted, ms) {
+      fired = true;
+    });
+    setTimeout(function() {
+      expect(fired).to.be(false);
+      done();
+    }, 60);
+  });
 
-	it('should NOT fire the almostdone event', function(done) {
-		var stopwatch = new Stopwatch(false, {almostDoneMS:50, refreshRateMS:10});
-		stopwatch.start();
-		var fired = false;
-		stopwatch.on('almostdone',function(formatted, ms){
-			fired = true;
-		});
-		setTimeout(function() {
-			expect(fired).to.be(false);
-			done();
-		}, 60);
-	});
+  it("should fire the stop event", function(done) {
+    var stopwatch = new Stopwatch();
 
+    var onStop = function onStop() {
+      expect(true).to.equal(true);
+      stopwatch.removeListener("stop", onStop);
+      done();
+    };
 
-	it('should NOT fire the done event', function(done) {
-		var stopwatch = new Stopwatch();
-		stopwatch.start();
-		var fired = false;
-		stopwatch.on('done',function(formatted, ms){
-			fired = true;
-		});
-		setTimeout(function() {
-			expect(fired).to.be(false);
-			done();
-		}, 60);
-	});
+    stopwatch.start();
+    stopwatch.on("stop", onStop);
+    stopwatch.stop();
+  });
 
-	it('should fire the stop event', function(done) {
-		var stopwatch = new Stopwatch();
-		
-		var onStop = function onStop(){
-			expect(true).to.equal(true);
-			stopwatch.removeListener('stop', onStop);
-			done();
-		};
+  it("should lap the time", function(done) {
+    var stopwatch = new Stopwatch({ refreshRateMS: 1 });
+    stopwatch.start();
 
-		stopwatch.start();
-		stopwatch.on('stop', onStop);
-		stopwatch.stop();
-	});
+    setTimeout(function() {
+      stopwatch.lap();
+    }, 10);
 
-	it('should lap the time', function(done) {
-		var stopwatch = new Stopwatch({refreshRateMS:1});
-		stopwatch.start();
+    setTimeout(function() {
+      stopwatch.lap();
+    }, 20);
 
-		setTimeout(function() {
-			stopwatch.lap();		
-		}, 10);
+    setTimeout(function() {
+      stopwatch.lap();
+    }, 30);
 
-		setTimeout(function() {
-			stopwatch.lap();
-		}, 20);
+    setTimeout(function() {
+      stopwatch.stop();
+      var lap = stopwatch.lap();
+      expect(lap <= 12 && lap >= 10).to.be(true);
+      done();
+    }, 40);
+  });
 
-		setTimeout(function() {
-			stopwatch.lap();
-		}, 30);
+  it("should have the lap time at zero without starting the timer", function(done) {
+    var stopwatch = new Stopwatch({ refreshRateMS: 1 });
+    setTimeout(function() {
+      stopwatch.lap();
+    }, 10);
 
-		setTimeout(function() {
-			stopwatch.stop();
-			var lap = stopwatch.lap();
-			expect(lap <= 12 && lap>=10).to.be(true);
-			done();
-		}, 40);
-	});
+    setTimeout(function() {
+      stopwatch.lap();
+    }, 20);
 
-	it('should have the lap time at zero without starting the timer',function(done){
-		var stopwatch = new Stopwatch({refreshRateMS:1});
-		setTimeout(function() {
-			stopwatch.lap();
-		}, 10);
+    setTimeout(function() {
+      stopwatch.lap();
+    }, 30);
 
-		setTimeout(function() {
-			stopwatch.lap();
-		}, 20);
+    setTimeout(function() {
+      stopwatch.stop();
+      var lap = stopwatch.lap();
+      expect(lap).to.be(0);
+      done();
+    }, 40);
+  });
 
-		setTimeout(function() {
-			stopwatch.lap();
-		}, 30);
-
-		setTimeout(function() {
-			stopwatch.stop();
-			var lap = stopwatch.lap();
-			expect(lap).to.be(0);
-			done();
-		}, 40);
-	});
-
-	it('should have elapsed time higher than the 0 at max refresh speed', function(done) {
-		var stopwatch = new Stopwatch({refreshRateMS:1});
-		stopwatch.start();
-		var startTime = stopwatch.ms;
-		setTimeout(function(){
-			stopwatch.stop();
-			expect(stopwatch.ms).to.be.above(startTime);
-			done();
-		}, 3);
-	});
-
+  it("should have elapsed time higher than the 0 at max refresh speed", function(done) {
+    var stopwatch = new Stopwatch({ refreshRateMS: 1 });
+    stopwatch.start();
+    var startTime = stopwatch.ms;
+    setTimeout(function() {
+      stopwatch.stop();
+      expect(stopwatch.ms).to.be.above(startTime);
+      done();
+    }, 3);
+  });
 });
-
