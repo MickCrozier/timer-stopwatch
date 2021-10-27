@@ -264,7 +264,7 @@ describe('Countdown Timer', function() {
 			var lap = countdownTimer.lap();
 			expect(lap <= 12 && lap>=10).to.be(true);
 			done();
-		},30)	
+		},30);
 	});
 	
 });
